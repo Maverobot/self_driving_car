@@ -81,6 +81,9 @@ def main():
     while cap.isOpened():
         _, frame = cap.read()
 
+        if frame is None:
+            break
+
         # Get canny image
         canny_image = canny(frame)
 
