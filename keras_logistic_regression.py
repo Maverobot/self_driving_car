@@ -7,7 +7,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Tested with tensorflow 1.9
-import tensorflow as tf
 from tensorflow import keras
 
 
