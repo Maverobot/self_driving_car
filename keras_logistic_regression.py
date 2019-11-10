@@ -34,9 +34,6 @@ def main():
     X = np.vstack((Xa, Xb))
     y = np.matrix([np.zeros(n_pts), np.ones(n_pts)]).reshape(n_pts * 2, 1)
 
-    # plt.scatter(X[:n_pts, 0], X[:n_pts, 1])
-    # plt.scatter(X[n_pts:, 0], X[n_pts:, 1])
-
     model = keras.Sequential()
     model.add(keras.layers.Dense(units=1, input_shape=(2,), activation="sigmoid"))
 
@@ -45,10 +42,25 @@ def main():
     model.compile(adam, loss="binary_crossentropy", metrics=["accuracy"])
     h = model.fit(x=X, y=y, verbose=1, batch_size=100, epochs=200, shuffle="true")
 
+    plt.figure(0)
     plt.plot(h.history["loss"])
     plt.title("loss")
     plt.xlabel("epoch")
     plt.legend(["loss"])
+
+    plt.figure(1)
+    plot_decision_boundary(X, y, model)
+    plt.scatter(X[:n_pts, 0], X[:n_pts, 1])
+    plt.scatter(X[n_pts:, 0], X[n_pts:, 1])
+
+    # Test prediction
+    x = 7.5
+    y = 5
+    point = np.array([[x, y]])
+    prediction = model.predict(point)
+    plt.plot([x], [y], marker="o", markersize=10, color="red")
+    print("prediction is: ", prediction)
+
     plt.show(block=True)
 
 
