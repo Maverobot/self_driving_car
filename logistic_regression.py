@@ -15,9 +15,9 @@ def sigmoid(score):
     return 1 / (1 + np.exp(-score))
 
 
-def calculate_error(line_pararmeters, points, y):
+def calculate_error(line_parameters, points, y):
     m = y.shape[0]
-    p = sigmoid(all_points * line_parameters)
+    p = sigmoid(points * line_parameters)
     cross_entropy = -(np.log(p).T * y + np.log(1 - p).T * (1 - y)) / m
     return cross_entropy
 
