@@ -11,6 +11,17 @@ import tensorflow as tf
 from tensorflow import keras
 
 
+def plot_decision_boundary(X, y, model):
+    x_span = np.linspace(min(X[:, 0]) - 1, max(X[:, 0]) + 1)
+    y_span = np.linspace(min(X[:, 1]) - 1, max(X[:, 1]) + 1)
+    xx, yy = np.meshgrid(x_span, y_span)
+    xx_, yy_ = xx.ravel(), yy.ravel()
+    grid = np.c_[xx_, yy_]
+    pred = model.predict(grid)
+    z = pred.reshape(xx.shape)
+    plt.contourf(xx, yy, z)
+
+
 def main():
     """
     This is the main workflow of logistic regression.
