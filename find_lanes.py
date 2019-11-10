@@ -18,9 +18,9 @@ def canny(image):
     # Edge detection
     # Gradients higher than 150 is picked and lower than 50 is dropped
     # Pixels with gradient between 50 and 150 are only picked if connected to an already picked pixel.
-    canny = cv2.Canny(blur, 50, 150)
+    canny_image = cv2.Canny(blur, 50, 150)
 
-    return canny
+    return canny_image
 
 
 def region_of_interest(image):
