@@ -38,8 +38,7 @@ def main():
     plt.title("loss")
     plt.xlabel("epoch")
     plt.legend(["loss"])
-    plt.show(block=False)
-    plt.waitforbuttonpress()
+    plt.show(block=True)
 
 
 if __name__ == "__main__":
