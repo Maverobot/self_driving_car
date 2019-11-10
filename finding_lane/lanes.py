@@ -106,7 +106,10 @@ def main():
 
         combo_image = cv2.addWeighted(frame, 0.8, line_image, 1, 0)
         cv2.imshow("result", combo_image)
-        cv2.waitKey(1)
+        if cv2.waitKey(1) & 0xFF == ord("q"):
+            break
+    cap.release()
+    cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
