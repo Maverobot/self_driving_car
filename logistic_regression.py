@@ -37,32 +37,33 @@ def gradient_descent(line_parameters, points, y, alpha):
         print(calculate_error(line_parameters, points, y))
 
 
-n_pts = 200
-# Make the program result repeatable
-np.random.seed(0)
+def main():
+    n_pts = 200
+    # Make the program result repeatable
+    np.random.seed(0)
 
-bias = np.ones(n_pts)
+    bias = np.ones(n_pts)
 
-top_region = np.array(
-    [np.random.normal(10, 2, n_pts), np.random.normal(12, 2, n_pts), bias]
-).T
-bottom_region = np.array(
-    [np.random.normal(5, 2, n_pts), np.random.normal(6, 2, n_pts), bias]
-).T
-all_points = np.vstack((top_region, bottom_region))
+    top_region = np.array(
+        [np.random.normal(10, 2, n_pts), np.random.normal(12, 2, n_pts), bias]
+    ).T
+    bottom_region = np.array(
+        [np.random.normal(5, 2, n_pts), np.random.normal(6, 2, n_pts), bias]
+    ).T
+    all_points = np.vstack((top_region, bottom_region))
+
+    line_parameters = np.matrix(np.zeros(3)).T
+
+    probability = sigmoid(all_points * line_parameters)
+    y = np.array([np.zeros(n_pts), np.ones(n_pts)]).reshape(n_pts * 2, 1)
+
+    _, ax = plt.subplots(figsize=(4, 4))
+    ax.scatter(top_region[:, 0], top_region[:, 1], color="r")
+    ax.scatter(bottom_region[:, 0], bottom_region[:, 1], color="b")
+    gradient_descent(line_parameters, all_points, y, 0.05)
+    print("Gradient descent is finished.")
+    plt.show(block=True)
 
 
-line_parameters = np.matrix(np.zeros(3)).T
-
-probability = sigmoid(all_points * line_parameters)
-y = np.array([np.zeros(n_pts), np.ones(n_pts)]).reshape(n_pts * 2, 1)
-
-ce = calculate_error(line_parameters, all_points, y)
-print(ce)
-
-_, ax = plt.subplots(figsize=(4, 4))
-ax.scatter(top_region[:, 0], top_region[:, 1], color="r")
-ax.scatter(bottom_region[:, 0], bottom_region[:, 1], color="b")
-gradient_descent(line_parameters, all_points, y, 0.05)
-print("Gradient descent is finished.")
-plt.show(block=True)
+if __name__ == "__main__":
+    main()
