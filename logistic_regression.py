@@ -34,6 +34,7 @@ def gradient_descent(line_parameters, points, y, alpha):
         x1 = np.array([points[:, 0].min(), points[:, 0].max()])
         x2 = -b / w2 + x1 * (-w1 / w2)
         draw(x1, x2)
+        print(calculate_error(line_parameters, points, y))
 
 
 n_pts = 200
