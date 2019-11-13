@@ -64,7 +64,7 @@ def main():
     print(X_train.shape)
     print(y_train.shape)
     check_dataset(X_train, y_train, X_test, y_test)
-    show_sample_images(X_train, y_train)
+    # show_sample_images(X_train, y_train)
     num_classes = len(set(y_train))
 
     # Use one-hot encoding
@@ -77,22 +77,34 @@ def main():
     X_train = X_train / 255
     X_test = X_test / 255
 
-    # Flatten the datao
+    # Flatten the data
     input_dim = X_train.shape[1] * X_train.shape[2]
     X_train = X_train.reshape(X_train.shape[0], input_dim)
     X_test = X_test.reshape(X_test.shape[0], input_dim)
 
     model = create_model(input_dim, num_classes)
     print(model.summary())
-    model.fit(
+    h = model.fit(
         x=X_train,
         y=y_train,
         validation_split=0.1,
         verbose=1,
-        epochs=10,
+        epochs=30,
         batch_size=200,
         shuffle=True,
     )
+
+    plt.figure(2)
+    plt.plot(h.history["loss"])
+    plt.plot(h.history["val_loss"])
+    plt.legend(["loss", "val_loss"])
+    plt.title("loss")
+    plt.xlabel("epoch")
+
+    score = model.evaluate(X_test, y_test, verbose=0)
+    print(type(score))
+    print("Test score: ", score[0])
+    print("Test accuracy: ", score[1])
 
     plt.show(block=True)
     return True
