@@ -108,6 +108,27 @@ def main():
     print("Test score: ", score[0])
     print("Test accuracy: ", score[1])
 
+    # Test with online image
+    import requests
+    from PIL import Image
+
+    url = "https://www.researchgate.net/profile/Jose_Sempere/publication/221258631/figure/fig1/AS:305526891139075@1449854695342/Handwritten-digit-2.png"
+    response = requests.get(url, stream=True)
+    print(response)
+    img = Image.open(response.raw)
+    import cv2
+
+    img_array = np.asarray(img)
+    img_resized = cv2.resize(img_array, (28, 28))
+    img_gray = cv2.cvtColor(img_resized, cv2.COLOR_RGB2GRAY)
+    img_gray = cv2.bitwise_not(img_gray)
+    plt.imshow(img_gray, cmap=plt.get_cmap("gray"))
+
+    img_gray = img_gray / 255
+    img_gray = img_gray.reshape(1, 784)
+    label = model.predict_classes(img_gray)
+    print("predicted digit: ", str(label))
+
     plt.show(block=True)
     return True
 
