@@ -13,15 +13,15 @@ to_categorical = keras.utils.to_categorical
 
 def check_dataset(X_train, y_train, X_test, y_test):
     assert (
-        X_train.shape[0] == y_train.shape[0],
-        "The number of images is not equal to the number of labels.",
-    )
+        X_train.shape[0] == y_train.shape[0]
+    ), "The number of images is not equal to the number of labels."
+
     assert (
         X_test.shape[0] == y_test.shape[0],
-        "The number of images is not equal to the number of labels.",
-    )
-    assert (X_train.shape[1:] == (28, 28), "The dimensions of the images are not 28x28")
-    assert (X_test.shape[1:] == (28, 28), "The dimensions of the images are not 28x28")
+    ), "The number of images is not equal to the number of labels."
+
+    assert X_train.shape[1:] == (28, 28), "The dimensions of the images are not 28x28"
+    assert X_test.shape[1:] == (28, 28), "The dimensions of the images are not 28x28"
 
 
 def show_sample_images(X_train, y_train, num_samples=5):
