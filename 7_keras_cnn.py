@@ -17,6 +17,7 @@ Dropout = keras.layers.Dropout
 MaxPooling2D = keras.layers.MaxPool2D
 Adam = keras.optimizers.Adam
 to_categorical = keras.utils.to_categorical
+Model = keras.Model
 
 
 def check_dataset(X_train, y_train, X_test, y_test):
@@ -155,6 +156,21 @@ def main(url):
     img_gray = img_gray.reshape(1, img_gray.shape[0], img_gray.shape[1], 1)
     label = model.predict_classes(img_gray)
     print("predicted digit: ", str(label))
+
+    # Visualize the hidden layer output
+    layer1 = Model(inputs=model.layers[0].input, outputs=model.layers[0].output)
+    layer2 = Model(inputs=model.layers[0].input, outputs=model.layers[2].output)
+    visual_layer1, visual_layer2 = layer1.predict(img_gray), layer2.predict(img_gray)
+    print(visual_layer1.shape)
+    print(visual_layer2.shape)
+    plt.figure(figsize=(10, 6))
+    for i in range(30):
+        plt.subplot(6, 5, i + 1)
+        plt.imshow(visual_layer1[0, :, :, i], cmap=plt.get_cmap("jet"))
+    plt.figure(figsize=(10, 6))
+    for i in range(15):
+        plt.subplot(3, 5, i + 1)
+        plt.imshow(visual_layer2[0, :, :, i], cmap=plt.get_cmap("jet"))
 
     plt.show(block=True)
     return True
