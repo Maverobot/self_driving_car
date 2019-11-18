@@ -13,6 +13,7 @@ Sequential = keras.Sequential
 Dense = keras.layers.Dense
 Flatten = keras.layers.Flatten
 Conv2D = keras.layers.Conv2D
+Dropout = keras.layers.Dropout
 MaxPooling2D = keras.layers.MaxPool2D
 Adam = keras.optimizers.Adam
 to_categorical = keras.utils.to_categorical
@@ -76,6 +77,7 @@ def create_lenet_model(input_shape, num_classes):
     model.add(MaxPooling2D((2, 2)))
     model.add(Flatten())
     model.add(Dense(units=500, activation="relu"))
+    model.add(Dropout(0.5))
     model.add(Dense(units=num_classes, activation="softmax"))
     model.compile(Adam(lr=0.01), loss="categorical_crossentropy", metrics=["accuracy"])
     return model
