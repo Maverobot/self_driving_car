@@ -121,12 +121,12 @@ def main(url):
             batch_size=200,
             shuffle=True,
         )
-        plt.figure(1)
-        plt.plot(h.history["loss"])
-        plt.plot(h.history["val_loss"])
-        plt.legend(["loss", "val_loss"])
-        plt.title("loss")
-        plt.xlabel("epoch")
+        # plt.figure(1)
+        # plt.plot(h.history["acc"])
+        # plt.plot(h.history["val_acc"])
+        # plt.legend(["acc", "val_acc"])
+        # plt.title("acc")
+        # plt.xlabel("epoch")
 
     model.save_weights("mnist_weights.h5")
 
