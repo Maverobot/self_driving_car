@@ -41,7 +41,7 @@ def data_balancing(data, num_bins=25, plot=False):
     # center bins around zero
     centered_bin = (bins[:-1] + bins[1:]) * 0.5
 
-    max_samples_per_bin = 200
+    max_samples_per_bin = 400
 
     remove_list = []
     for bin_idx in range(num_bins):
