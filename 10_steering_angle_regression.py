@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 
 import os
-import random
 
 import cv2
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+# conda install -c conda-forge imgaug
+from imgaug import augmenters as iaa
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 from tensorflow import keras
@@ -140,6 +141,40 @@ def nvidia_model():
     return model
 
 
+def zoom(image):
+    zoom = iaa.Affine(scale=(1, 1.3))
+    return zoom.augment_image(image)
+
+
+def pan(image):
+    pan = iaa.Affine(translate_percent={'x': {-0.1, 0.1}, 'y': {-0.1, 0.1}})
+    return pan.augment_image(image)
+
+
+def img_random_brightness(imsage):
+    random_brightness = iaa.Multiply((0.2, 1.2))
+    return random_brightness.augment_image(image)
+
+
+def img_flip(image, steering_angle):
+    image = cv2.flip(image, 1)
+    steering_angle = -steering_angle
+    return image, steering_angle
+
+
+def random_augment(image_path, steering_angle):
+    image = mpimg.imread(image_path)
+    if np.random.rand() < 0.5:
+        image = pan(image)
+    if np.random.rand() < 0.5:
+        image = zoom(image)
+    if np.random.rand() < 0.5:
+        image = img_random_brightness(image)
+    if np.random.rand() < 0.5:
+        image, steering_angle = img_flip(image, steering_angle)
+    return image, steering_angle
+
+
 def main():
     num_bins = 25
     data = load_data()
@@ -161,6 +196,7 @@ def main():
     X_train = np.array(list(map(img_preprocess, X_train)))
     X_valid = np.array(list(map(img_preprocess, X_valid)))
 
+    # import random
     # plt.imshow(X_train[random.randint(0, len(X_train) - 1)])
     # plt.axis("off")
     # print(X_train.shape)
