@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import random
 
 import cv2
 import matplotlib.image as mpimg
@@ -79,8 +80,7 @@ def path_leaf(path):
     return os.path.basename(path)
 
 
-def img_preprocess(img_path):
-    img = mpimg.imread(img_path)
+def img_preprocess(img):
     # Crop only the relavant image region
     img = img[60:135, :, :]
     # Use YUV color space as nvidia NN model recommended
@@ -175,6 +175,26 @@ def random_augment(image_path, steering_angle):
     return image, steering_angle
 
 
+# different for training or validation set
+def batch_generator(image_paths, steering_angles, batch_size, is_training):
+    while True:
+        batch_img = []
+        batch_steering = []
+
+        for i in range(batch_size):
+            random_idx = random.randint(0, len(image_paths) - 1)
+            if is_training:
+                img, steering = random_augment(image_paths[random_idx],
+                                               steering_angles[random_idx])
+            else:
+                img = mpimg.imread(image_paths[random_idx])
+                steering = steering_angles[random_idx]
+            img = img_preprocess(img)
+            batch_img.append(img)
+            batch_steering.append(steering)
+        yield (np.asarray(batch_img), np.asarray(batch_steering))
+
+
 def main():
     num_bins = 25
     data = load_data()
@@ -196,7 +216,6 @@ def main():
     X_train = np.array(list(map(img_preprocess, X_train)))
     X_valid = np.array(list(map(img_preprocess, X_valid)))
 
-    # import random
     # plt.imshow(X_train[random.randint(0, len(X_train) - 1)])
     # plt.axis("off")
     # print(X_train.shape)
