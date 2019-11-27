@@ -94,18 +94,6 @@ def img_preprocess(img):
     return img
 
 
-def random_test(image_paths):
-    image_path = image_paths[100]
-    original_img = mpimg.imread(image_path)
-    preprocessed_img = img_preprocess(image_path)
-    fig, axes = plt.subplots(1, 2, figsize=(15, 10))
-    fig.tight_layout()
-    axes[0].imshow(original_img)
-    axes[0].set_title("original image")
-    axes[1].imshow(preprocessed_img)
-    axes[1].set_title("preprocessed image")
-
-
 def nvidia_model():
     model = Sequential()
     model.add(
@@ -126,16 +114,12 @@ def nvidia_model():
                activation='elu'))
     model.add(Conv2D(filters=64, kernel_size=(3, 3), activation='elu'))
     model.add(Conv2D(filters=64, kernel_size=(3, 3), activation='elu'))
-    model.add(Dropout(0.5))
 
     model.add(Flatten())
     model.add(Dense(units=100, activation='elu'))
-    model.add(Dropout(0.5))
 
     model.add(Dense(units=50, activation='elu'))
-    model.add(Dropout(0.5))
     model.add(Dense(units=10, activation='elu'))
-    model.add(Dropout(0.5))
     model.add(Dense(units=1))
     model.compile(Adam(lr=0.001), loss='mse')
     return model
@@ -147,11 +131,11 @@ def zoom(image):
 
 
 def pan(image):
-    pan = iaa.Affine(translate_percent={'x': {-0.1, 0.1}, 'y': {-0.1, 0.1}})
+    pan = iaa.Affine(translate_percent={'x': (-0.1, 0.1), 'y': (-0.1, 0.1)})
     return pan.augment_image(image)
 
 
-def img_random_brightness(imsage):
+def img_random_brightness(image):
     random_brightness = iaa.Multiply((0.2, 1.2))
     return random_brightness.augment_image(image)
 
@@ -175,7 +159,8 @@ def random_augment(image_path, steering_angle):
     return image, steering_angle
 
 
-# different for training or validation set
+# This helps with regularization as well. Overfitting issue can be fixed by
+# batch generator.
 def batch_generator(image_paths, steering_angles, batch_size, is_training):
     while True:
         batch_img = []
@@ -205,33 +190,21 @@ def main():
                                                           steerings,
                                                           test_size=0.2,
                                                           random_state=0)
-    # print("Training samples: {}\nValid Samples: {}".format(
-    #     len(X_train), len(X_valid)))
-    # fig, axes = plt.subplots(1, 2, figsize=(12, 4))
-    # axes[0].hist(y_train, bins=num_bins, width=0.05, color='blue')
-    # axes[0].set_title("Training set")
-    # axes[1].hist(y_valid, bins=num_bins, width=0.05, color='red')
-    # axes[1].set_title("Validation set")
-
-    X_train = np.array(list(map(img_preprocess, X_train)))
-    X_valid = np.array(list(map(img_preprocess, X_valid)))
-
-    # plt.imshow(X_train[random.randint(0, len(X_train) - 1)])
-    # plt.axis("off")
-    # print(X_train.shape)
     model = nvidia_model()
     print(model.summary())
 
     try:
         model.load_weights("nvidia_net_weights.h5")
     except Exception:
-        history = model.fit(X_train,
-                            y_train,
-                            epochs=35,
-                            validation_data=(X_valid, y_valid),
-                            verbose=1,
-                            batch_size=100,
-                            shuffle=True)
+        history = model.fit_generator(batch_generator(X_train, y_train, 100,
+                                                      True),
+                                      steps_per_epoch=300,
+                                      epochs=10,
+                                      validation_data=batch_generator(
+                                          X_valid, y_valid, 100, False),
+                                      validation_steps=200,
+                                      verbose=1,
+                                      shuffle=True)
         model.save_weights("nvidia_net_weights.h5")
         model.save("nvidia_net_model.h5")
 
